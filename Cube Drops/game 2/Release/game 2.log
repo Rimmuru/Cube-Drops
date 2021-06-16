@@ -1,0 +1,6 @@
+﻿  Window.cpp
+  Generating code
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 309 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  game 2.vcxproj -> C:\Users\lauren\source\repos\SFML-2d-learning\game 2\Release\game 2.exe

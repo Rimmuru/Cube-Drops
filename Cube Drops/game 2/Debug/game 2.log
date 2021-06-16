@@ -1,0 +1,8 @@
+﻿  Game.cpp
+C:\Users\lauren\source\repos\SFML-2d-learning\game 2\game 2\src\Game\Game.cpp(206,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lauren\source\repos\SFML-2d-learning\game 2\game 2\src\Game\Game.cpp(218,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lauren\source\repos\SFML-2d-learning\game 2\game 2\src\Game\Game.cpp(236,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\lauren\source\repos\SFML-2d-learning\game 2\game 2\src\Game\Game.cpp(357,64): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lauren\source\repos\SFML-2d-learning\game 2\game 2\src\Game\Game.cpp(357,41): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\lauren\source\repos\SFML-2d-learning\game 2\game 2\src\Game\Game.cpp(392,41): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  game 2.vcxproj -> C:\Users\lauren\source\repos\SFML-2d-learning\game 2\Debug\game 2.exe
