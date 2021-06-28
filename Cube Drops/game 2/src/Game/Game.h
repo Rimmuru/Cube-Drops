@@ -4,6 +4,8 @@
 #include <ctime>
 #include <sstream>
 
+#include "../Buttons/button.hpp"
+
 #include "SFML/Audio.hpp"
 #include "SFML/Network.hpp"
 #include "SFML/System.hpp"
@@ -33,21 +35,20 @@ public:
 	void UpdateMousePos();
 	void UpdateText();
 	void UpdateEnemies();
+	void UpdateClock();
 
 	void SpawnEnemy();
 
 	void Render();
-	void RenderPause(sf::RenderTarget& target);
+	void RenderGameScreens(sf::RenderTarget& target);
+	void RenderParticles (sf::RenderTarget& target);
 	void RenderBackground(sf::RenderTarget& target);
 	void RenderEnemies(sf::RenderTarget& target);
 	void RenderText(sf::RenderTarget& target);
 
-	void RenderButton(float x, float y, float w, float h, std::string& text, sf::RenderTarget& target);
-	void InitButton();
-
 	sf::Vector2f MousePosView;
 private:
-	//Varibles
+	//Variables
 	sf::RenderWindow* window;
 	sf::VideoMode videomode;
 	sf::Event ev;
@@ -59,12 +60,18 @@ private:
 
 	//Textures
 	sf::Texture CubeTexture;
+	sf::Texture ParticleTexture;
 	sf::Texture PauseTexture;
 	sf::Texture BackgroundTexture;
-	sf::Texture ButtonTexture;
 
+	//Sounds
 	sf::SoundBuffer SoundBuffer;
 	sf::Sound Sound;
+	
+	//Particle System
+	sf::Clock clock;
+	thor::ParticleSystem system;
+	thor::UniversalEmitter emitter;
 
 	//Non visible functions
 	void InitVariables();
@@ -76,6 +83,7 @@ private:
 	void InitText();
 	void InitTextures();
 	void InitSounds();
+	void FpsCounter();
 
 	//Mouse positions
 	sf::Vector2i MousePosWindow;
@@ -85,6 +93,7 @@ private:
 	unsigned HighestPoints;
 
 	int Health;
+	int fps;
 
 	float EnemySpawnTimer;
 	float EnemySpawnTimerMax;
@@ -94,12 +103,12 @@ private:
 	bool EndGame;
 	bool GamePaused;
 	bool Music;
+	bool EnemyDeleted;
 
 	//Game Objects
 	std::vector<sf::RectangleShape> enemies;
 	sf::RectangleShape enemy;
 	sf::RectangleShape Pause;
 	sf::RectangleShape BackgroundShape;
-	sf::RectangleShape ButtonShape;
 };
 
