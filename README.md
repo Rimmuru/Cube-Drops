@@ -1,7 +1,7 @@
 # Cube-Drops
 Cube Drops - An sfml 2d game coded in c++
 
-![alt text](https://i.imgur.com/ijGninZ.gif)
+![alt text](https://i.imgur.com/xuxIwGi.gif)
 
 # Credits
 [PushButton Button Class](https://github.com/pushbuttonreceivecode "pushbutton")
