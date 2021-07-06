@@ -4,9 +4,9 @@ Cube Drops - An sfml 2d game coded in c++
 ![alt text](https://i.imgur.com/xuxIwGi.gif)
 
 # Credits
-[PushButton](https://github.com/pushbuttonreceivecode "pushbutton")
-[Thor Libary](https://bromeon.ch/libraries/thor/download/index.html "Thor")
-[MrReeko](https://github.com/MrReekoFTWxD "reeko")
+[PushButton](https://github.com/pushbuttonreceivecode "pushbutton") <br/>
+[Thor Libary](https://bromeon.ch/libraries/thor/download/index.html "Thor") <br/>
+[MrReeko](https://github.com/MrReekoFTWxD "reeko") <br/>
 
 # MIT License
 
