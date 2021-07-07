@@ -3,8 +3,11 @@
 #include <vector>
 #include <ctime>
 #include <sstream>
+#include <filesystem>
+#include <fstream>
 
 #include "../Buttons/button.hpp"
+#include "../IniOptions/IniOptions.h"
 
 #include "SFML/Audio.hpp"
 #include "SFML/Network.hpp"
@@ -12,7 +15,7 @@
 #include "SFML/Graphics.hpp"
 
 //Game engine class 
-class Game
+class Game 
 {
 public:
 	//Constructor
@@ -37,8 +40,10 @@ public:
 	void UpdateEnemies();
 	void UpdateClock();
 
+	void FpsCounter();
 	void SpawnEnemy();
 
+	//Renderer
 	void Render();
 	void RenderGameScreens(sf::RenderTarget& target);
 	void RenderParticles (sf::RenderTarget& target);
@@ -47,6 +52,9 @@ public:
 	void RenderText(sf::RenderTarget& target);
 
 	sf::Vector2f MousePosView;
+	
+	//Returns location of appdata and stores it in the char
+	char* appdata = getenv("APPDATA");
 private:
 	//Variables
 	sf::RenderWindow* window;
@@ -70,8 +78,17 @@ private:
 	
 	//Particle System
 	sf::Clock clock;
-	thor::ParticleSystem system;
+	thor::ParticleSystem PSystem;
 	thor::UniversalEmitter emitter;
+
+	//Game Objects
+	std::vector<sf::RectangleShape> enemies;
+	sf::RectangleShape enemy;
+	sf::RectangleShape Pause;
+	sf::RectangleShape BackgroundShape;
+
+	//Mouse Position
+	sf::Vector2i MousePosWindow;
 
 	//Non visible functions
 	void InitVariables();
@@ -83,13 +100,11 @@ private:
 	void InitText();
 	void InitTextures();
 	void InitSounds();
-	void FpsCounter();
 
-	//Mouse positions
-	sf::Vector2i MousePosWindow;
+	void SaveGame();
 
 	//Game Logic
-	unsigned Points;
+	unsigned Score;
 	unsigned HighestPoints;
 
 	int Health;
@@ -102,13 +117,6 @@ private:
 	bool MouseHeld;
 	bool EndGame;
 	bool GamePaused;
-	bool Music;
 	bool EnemyDeleted;
-
-	//Game Objects
-	std::vector<sf::RectangleShape> enemies;
-	sf::RectangleShape enemy;
-	sf::RectangleShape Pause;
-	sf::RectangleShape BackgroundShape;
 };
 

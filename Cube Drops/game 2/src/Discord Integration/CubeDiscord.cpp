@@ -1,5 +1,46 @@
 #include "CubeDiscord.h"
-#include <cstdarg>
+
+/*
+Following functions
+ReplaceAll and DownloadString
+are from stackoverflow
+*/
+
+std::string ReplaceAll(std::string subject, const std::string& search, const std::string& replace)
+{
+	size_t pos = 0;
+	while ((pos = subject.find(search, pos)) != std::string::npos) {
+		subject.replace(pos, search.length(), replace);
+		pos += replace.length();
+	}
+	return subject;
+}
+
+std::string DownloadString(std::string URL)
+{
+	HINTERNET interwebs = InternetOpenA("Mozilla/5.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, NULL);
+	HINTERNET urlFile;
+	std::string rtn;
+	if (interwebs) {
+		urlFile = InternetOpenUrlA(interwebs, URL.c_str(), NULL, NULL, NULL, NULL);
+		if (urlFile) {
+			char buffer[2000];
+			DWORD bytesRead;
+			do {
+				InternetReadFile(urlFile, buffer, 2000, &bytesRead);
+				rtn.append(buffer, bytesRead);
+				memset(buffer, 0, 2000);
+			} while (bytesRead);
+			InternetCloseHandle(interwebs);
+			InternetCloseHandle(urlFile);
+			std::string p = ReplaceAll(rtn, "|n", "\r\n");
+			return p;
+		}
+	}
+	InternetCloseHandle(interwebs);
+	std::string p = ReplaceAll(rtn, "|n", "\r\n");
+	return p;
+}
 
 void SetUpDiscord() 
 {
@@ -11,13 +52,16 @@ void SetUpDiscord()
 
 void UpdateDiscord()
 {
+	std::string StrState = DownloadString("https://pastebin.com/raw/amCjxbtP");
+	const char* State = StrState.c_str();
+
 	DiscordRichPresence presence;
 	memset(&presence, 0, sizeof(presence));
 	presence.largeImageKey = "large";
 	presence.largeImageText = "Cube Drops By Rimuru";
 	presence.smallImageKey = "small";
 
-	presence.state = "Cube Drops";
-	presence.details = "Now with particles!";
+	presence.details = "";
+	presence.state = State;
 	Discord_UpdatePresence(&presence);
 }

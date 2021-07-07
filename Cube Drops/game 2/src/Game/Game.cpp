@@ -1,10 +1,9 @@
 #include "Game.h"
 #include "../Discord Integration/CubeDiscord.h"
 #include <Thor/Math/Distributions.hpp>
-#include <chrono>
 
-//using namespaces because im lazy
 using namespace sf;
+Cube_IniReader ini;
 
 //Constructor
 Game::Game()
@@ -19,7 +18,14 @@ Game::Game()
 	InitBackground();
 	InitEnemy();
 
-	SetUpDiscord();
+	ini.InitFuncts();
+	ini.InitValues();
+
+	if (ini.DiscordPresence) 
+	{
+		SetUpDiscord();
+		UpdateDiscord();
+	}
 }
 
 //Destructor
@@ -54,10 +60,10 @@ if GetEndGame is true
 		EndGame = false;
 		EnemySpawnTimer = 0;
 		Health = 100;
-		Points = 0;
+		Score = 0;
 		enemies.clear();
-		system.clearEmitters();
-		system.clearParticles();
+		PSystem.clearEmitters();
+		PSystem.clearParticles();
 	}
 }
 
@@ -70,6 +76,7 @@ void Game::UpdateEvents()
 		case Event::Closed:
 			window->close();
 			Discord_Shutdown();
+			SaveGame();
 			break;
 			//Checks for key being pressed wasd ect
 		case Event::KeyPressed:
@@ -110,8 +117,8 @@ void Game::Update()
 //Tracker for highest points and maybe more in future
 void Game::UpdatePoints()
 {
-	if (Points > HighestPoints)
-		HighestPoints = Points;
+	if (Score > HighestPoints)
+		HighestPoints = Score;
 }
 
 void Game::UpdateMousePos()
@@ -132,10 +139,9 @@ void Game::UpdateClock()
 	// Update particle system every .5 seconds
 	if (clock.getElapsedTime().asMilliseconds() > 350 && !GamePaused) {
 
-		system.update(clock.getElapsedTime());
+		PSystem.update(clock.getElapsedTime());
 		clock.restart();
 	}
-
 }
 
 //Render stuffs to window
@@ -155,7 +161,7 @@ void Game::Render()
 
 	//Draw Game objects
 	window->draw(enemy);
-	window->draw(system);
+	window->draw(PSystem);
 
 	RenderBackground(*window);
 	//RenderParticles(*window);
@@ -222,15 +228,15 @@ void Game::UpdateEnemies()
 				{
 					//Point system
 					if (enemies[i].getFillColor() == Color::White)
-						Points += 10;
+						Score += 10;
 					else if (enemies[i].getFillColor() == Color::Cyan)
-						Points += 8;
+						Score += 8;
 					else if (enemies[i].getFillColor() == Color(132, 205, 235, 255))
-						Points += 5;
+						Score += 5;
 					else if (enemies[i].getFillColor() == Color(60, 178, 225, 255))
-						Points += 3;
+						Score += 3;
 					else if (enemies[i].getFillColor() == Color(234, 132, 220, 255))
-						Points += 1;
+						Score += 1;
 
 					//Delete the enemy
 					EnemyDeleted = true;
@@ -246,32 +252,28 @@ void Game::UpdateEnemies()
 
 void Game::RenderGameScreens(RenderTarget& target)
 {
-	//Pause Screen
-	if (GamePaused)
+	//Pause screen buttons
+	if (GamePaused && !EndGame)
 	{
-		gui::button MusicButton("Mute Music", Font, sf::Vector2f(videomode.width / 2, 150.f), gui::style::clean);
 		gui::button Restart("Restart Game", Font, sf::Vector2f(videomode.width / 2, 200.f), gui::style::clean);
 		gui::button Quit("Quit Game", Font, sf::Vector2f(videomode.width / 2, 250.f), gui::style::cancel);
 
 		Restart.setColorHover(Color::Green);
 		Restart.setColorTextClicked(Color::Green);
 
-		target.draw(MusicButton);
 		target.draw(Restart);
 		target.draw(Quit);
 		target.draw(Pause);
 
-		MusicButton.update(ev, *window);
 		Restart.update(ev, *window);
 		Quit.update(ev, *window);
 
-		system.clearEmitters();
-		system.clearParticles();
+		PSystem.clearEmitters();
+		PSystem.clearParticles();
 	}
 
-	if (EndGame) 
+	if (EndGame)
 	{
-		GamePaused = false;
 		gui::button GameOver("Game Over", Font, sf::Vector2f(videomode.width / 2, 30.f), gui::style::cancel);
 		gui::button Quit("Restart Game", Font, sf::Vector2f(videomode.width / 2, 250.f), gui::style::clean);
 
@@ -289,9 +291,9 @@ void Game::RenderParticles(sf::RenderTarget& target)
 	emitter.setParticleScale(sf::Vector2f(0.25, 0.25));
 	emitter.setParticleLifetime(thor::Distributions::uniform(sf::seconds(5), sf::seconds(7)));
 
-	system.addEmitter(emitter);
+	PSystem.addEmitter(emitter);
 
-	target.draw(system);
+	target.draw(PSystem);
 }
 
 void Game::FpsCounter()
@@ -378,8 +380,8 @@ void Game::UpdateText()
 
 	ss << "Fps: " << fps << std::endl;
 	ss << "Highest Score: " << HighestPoints << std::endl;
-	ss << "Score: " << Points << std::endl;
-	ss << "Health: " << Health << "|100" << std::endl;
+	ss << "Score: " << Score << std::endl;
+	ss << "Health: " << Health << std::endl;
 
 	uiText.setString(ss.str());
 	SplashText.setString(splash.str());
@@ -391,24 +393,23 @@ void Game::InitVariables()
 	window = nullptr;
 
 	Health = 100;
-	Points = 0;
+	Score = 0;
 	HighestPoints = 0;
-	StoredPoints = Points;
+	StoredPoints = Score;
 	EnemySpawnTimerMax = 170.f;
 	EnemySpawnTimer = EnemySpawnTimerMax;
 	MaxEnemies = 2;
 	EndGame = false;
 	MouseHeld = false;
 	GamePaused = false;
-	Music = true;
 	EnemyDeleted = false;
 }
 
 //Initilise the window
 void Game::InitWindow()
 {
-	videomode.height = 600;
-	videomode.width = 800;
+	videomode.height = videomode.getDesktopMode().height;
+	videomode.width = videomode.getDesktopMode().width;
 
 	window = new RenderWindow(VideoMode(videomode.width, videomode.height), "Cube Drops", Style::Titlebar | Style::Resize | Style::Close);
 
@@ -417,7 +418,7 @@ void Game::InitWindow()
 
 void Game::InitPause()
 {
-	Pause.setPosition(Vector2f(videomode.width / 2.5, 10.f));
+	Pause.setPosition(Vector2f(videomode.width / 2.2, 10.f));
 	Pause.setSize(Vector2f(90.f, 90.f));
 	Pause.setScale(Vector2f(2.5f, 2.5f));
 }
@@ -432,8 +433,8 @@ void Game::InitEnemy()
 void Game::InitBackground()
 {
 	BackgroundShape.setPosition(Vector2f(videomode.width - videomode.width, 0.f));
-	BackgroundShape.setSize(Vector2f(200.f, 190.f));
-	BackgroundShape.setScale(Vector2f(4.f, 4.f));
+	BackgroundShape.setSize(Vector2f(videomode.width, videomode.height));
+	BackgroundShape.setScale(Vector2f(1.f, 1.2f));
 }
 
 void Game::InitText()
@@ -488,7 +489,7 @@ void Game::InitTextures()
 	BackgroundShape.setTexture(&BackgroundTexture);
 	Pause.setTexture(&PauseTexture);
 	enemy.setTexture(&CubeTexture);
-	system.setTexture(ParticleTexture);
+	PSystem.setTexture(ParticleTexture);
 }
 
 void Game::InitSounds()
@@ -498,7 +499,7 @@ void Game::InitSounds()
 	else
 		throw std::exception("ERROR::FAILED_TO_LOAD_Sounds/NightShade\n");
 
-	if (Music)
+	if (ini.Music)
 		Sound.setVolume(70);
 	else
 		Sound.setVolume(0);
@@ -507,5 +508,3 @@ void Game::InitSounds()
 	Sound.play();
 	Sound.setLoop(true);
 }
-
-
