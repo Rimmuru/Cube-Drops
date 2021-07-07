@@ -50,7 +50,19 @@ END
 // PNG
 //
 
-IDB_PNG1                PNG                     "C:\\Users\\lauren\\Pictures\\server-icon.png.png"
+IDB_PNG1                PNG                     "C:\\Users\\lauren\\Pictures\\server-icon.png"
+
+IDB_PNG2                PNG                     "C:\\Users\\lauren\\Downloads\\icon.png"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "C:\\Users\\lauren\\Downloads\\icon.ico"
 
 #endif    // English (United Kingdom) resources
 /////////////////////////////////////////////////////////////////////////////
