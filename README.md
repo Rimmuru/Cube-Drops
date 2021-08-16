@@ -1,13 +1,9 @@
 # Cube-Drops
-Cube Drops - An sfml 2d game coded in c++
+Cube Drops - 
+A cube based dropper using sfml and c++
+Steam release planned for future
 
 ![alt text](https://i.imgur.com/xuxIwGi.gif)
-
-# Credits
-[Button Class](https://github.com/pushbuttonreceivecode "pushbutton") <br/>
-[Particle Libary](https://bromeon.ch/libraries/thor/download/index.html "Thor") <br/>
-[Directory Help](https://github.com/MrReekoFTWxD "reeko") <br/>
-[inih](https://github.com/benhoyt "benhoyt") <br/>
 
 # MIT License
 
